@@ -14,6 +14,8 @@
 		A985687E1D91C13D007F106C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A985687C1D91C13D007F106C /* LaunchScreen.storyboard */; };
 		A98568891D91C13D007F106C /* HackerBooks2Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98568881D91C13D007F106C /* HackerBooks2Tests.swift */; };
 		A98568941D91C13D007F106C /* HackerBooks2UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98568931D91C13D007F106C /* HackerBooks2UITests.swift */; };
+		A98568A41D91C3AD007F106C /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A98568A21D91C3AD007F106C /* Model.xcdatamodeld */; };
+		A98568A71D91C492007F106C /* books_readable.json in Resources */ = {isa = PBXBuildFile; fileRef = A98568A61D91C492007F106C /* books_readable.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		A985688F1D91C13D007F106C /* HackerBooks2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HackerBooks2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A98568931D91C13D007F106C /* HackerBooks2UITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HackerBooks2UITests.swift; sourceTree = "<group>"; };
 		A98568951D91C13D007F106C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A98568A31D91C3AD007F106C /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		A98568A61D91C492007F106C /* books_readable.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = books_readable.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,8 @@
 		A98568721D91C13D007F106C /* HackerBooks2 */ = {
 			isa = PBXGroup;
 			children = (
+				A98568A51D91C44D007F106C /* Resources */,
+				A98568A11D91C391007F106C /* Models */,
 				A98568731D91C13D007F106C /* AppDelegate.swift */,
 				A98568751D91C13D007F106C /* ViewController.swift */,
 				A98568771D91C13D007F106C /* Main.storyboard */,
@@ -123,6 +129,22 @@
 				A98568951D91C13D007F106C /* Info.plist */,
 			);
 			path = HackerBooks2UITests;
+			sourceTree = "<group>";
+		};
+		A98568A11D91C391007F106C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A98568A21D91C3AD007F106C /* Model.xcdatamodeld */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		A98568A51D91C44D007F106C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A98568A61D91C492007F106C /* books_readable.json */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,6 +257,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A98568A71D91C492007F106C /* books_readable.json in Resources */,
 				A985687E1D91C13D007F106C /* LaunchScreen.storyboard in Resources */,
 				A985687B1D91C13D007F106C /* Assets.xcassets in Resources */,
 				A98568791D91C13D007F106C /* Main.storyboard in Resources */,
@@ -264,6 +287,7 @@
 			files = (
 				A98568761D91C13D007F106C /* ViewController.swift in Sources */,
 				A98568741D91C13D007F106C /* AppDelegate.swift in Sources */,
+				A98568A41D91C3AD007F106C /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -530,6 +554,19 @@
 			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		A98568A21D91C3AD007F106C /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				A98568A31D91C3AD007F106C /* Model.xcdatamodel */,
+			);
+			currentVersion = A98568A31D91C3AD007F106C /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = A98568681D91C13D007F106C /* Project object */;
 }
