@@ -7,9 +7,20 @@
 //
 
 import XCTest
+import CoreData
+
 @testable import HackerBooks2
 
 class HackerBooks2Tests: XCTestCase {
+    static func getJSONURL() -> URL {
+        guard let jsonURL = Bundle.main.url(forResource: "books_readable", withExtension: "json") else {
+            fatalError("Unable to read JSON file")
+        }
+        
+        return jsonURL
+    }
+    
+    var model = CoreDataStack(modelName: "Model")!
     
     override func setUp() {
         super.setUp()
@@ -21,16 +32,16 @@ class HackerBooks2Tests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-    
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testReadFromJSONFile() {
+        let jsonURL = HackerBooks2Tests.getJSONURL()
+        
+        let dict = try? read(fromJSON: jsonURL)
+        if let books = dict {
+            XCTAssertEqual(books.count, 30)
+            
+            
+        } else {
+            XCTAssert(false, "Error while reading json file")
         }
     }
-    
 }

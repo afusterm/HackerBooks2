@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11232" systemVersion="15G1004" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <entity name="Author" syncable="YES">
+    <entity name="Author" representedClassName=".Author" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="books" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Book" inverseName="authors" inverseEntity="Book" syncable="YES"/>
     </entity>
-    <entity name="Book" representedClassName="Book" syncable="YES">
+    <entity name="Book" representedClassName=".Book" syncable="YES">
         <attribute name="title" attributeType="String" syncable="YES"/>
         <relationship name="authors" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="books" inverseEntity="Author" syncable="YES"/>
-        <relationship name="bookTag" toMany="YES" deletionRule="Nullify" destinationEntity="BookTag" inverseName="book" inverseEntity="BookTag" syncable="YES"/>
+        <relationship name="bookTags" toMany="YES" deletionRule="Nullify" destinationEntity="BookTag" inverseName="book" inverseEntity="BookTag" syncable="YES"/>
     </entity>
-    <entity name="BookTag" representedClassName="BookTag" syncable="YES">
-        <relationship name="book" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="bookTag" inverseEntity="Book" syncable="YES"/>
+    <entity name="BookTag" representedClassName=".BookTag" syncable="YES">
+        <relationship name="book" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="bookTags" inverseEntity="Book" syncable="YES"/>
         <relationship name="tag" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="bookTag" inverseEntity="Tag" syncable="YES"/>
     </entity>
-    <entity name="Tag" representedClassName="Tag" syncable="YES">
+    <entity name="Tag" representedClassName=".Tag" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="bookTag" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="BookTag" inverseName="tag" inverseEntity="BookTag" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Book" positionX="-198" positionY="-27" width="128" height="88"/>
-        <element name="Tag" positionX="61" positionY="-9" width="128" height="73"/>
         <element name="Author" positionX="-245" positionY="195" width="128" height="75"/>
-        <element name="BookTag" positionX="63" positionY="234" width="128" height="73"/>
+        <element name="Book" positionX="-198" positionY="-27" width="128" height="90"/>
+        <element name="BookTag" positionX="63" positionY="234" width="128" height="75"/>
+        <element name="Tag" positionX="61" positionY="-9" width="128" height="75"/>
     </elements>
 </model>

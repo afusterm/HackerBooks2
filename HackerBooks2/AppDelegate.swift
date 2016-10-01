@@ -8,14 +8,41 @@
 
 import UIKit
 
+let urlHackerBooks = "https://t.co/K9ziV0z3SJ"
+let localBooksFilename = "books.json"
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    var model = CoreDataStack(modelName: "Model")!
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        if isFirstTime() {
+            
+            do {
+                //try downloadJSONFrom(string: urlHackerBooks, asLocalName: localBooksFilename,
+                try downloadJSONFrom(string: urlHackerBooks, asLocalName: localBooksFilename,
+                                     completion: { 
+                                        guard let jsonURL = Bundle.main.url(forResource: "books_readable", withExtension: "json") else {
+                                            fatalError("Unable to read JSON file")
+                                        }
+                                        
+                                        let dict = try? read(fromJSON: jsonURL)
+                                        if let booksArray = dict {
+                                            self.importBooks(fromJSONArray: booksArray)
+                                        }
+                })
+            } catch let err as HackerBooksError {
+                fatalError("Error on downloadJSON: " + err.description)
+            } catch {
+                fatalError("Error on downloadJSON")
+            }
+            
+            setAppLaunched()
+        }
+        
         return true
     }
 
@@ -41,6 +68,90 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-
+    // MARK: - Utils
+    
+    /**
+     *  Indicate wether it is the first time the application is launched.
+     */
+    private func isFirstTime() -> Bool {
+        let userDef = UserDefaults.standard
+        let firstTime = !userDef.bool(forKey: "appLaunched")
+        
+        return firstTime
+    }
+    
+    /**
+     *  Sets that the application has already been launched.
+     */
+    private func setAppLaunched() {
+        let userDef = UserDefaults.standard
+        userDef.set(true, forKey: "appLaunched")
+    }
+    
+    
+    private func importBooks(fromJSONArray json: JSONArray) {
+        do {
+            try self.model.dropAllData()
+        } catch let error {
+            print("Unable to drop data: " + error.localizedDescription)
+        }
+        
+        for dict in json {
+            book(withJSONDictionary: dict)
+        }
+        
+        self.model.save()
+    }
+    
+    private func book(withJSONDictionary dict: JSONDictionary) {
+        let authorsArray = arrayFrom(string: dict["authors"] as! String)
+        let authors = createAuthorsObjectsFrom(array: authorsArray)
+        let book = Book(title: dict["title"] as! String, authors: authors, inContext: model.context)
+        let tagsArray = arrayFrom(string: dict["tags"] as! String)
+        createBookTags(book: book, tags: tagsArray)
+    }
+    
+    private func createAuthorsObjectsFrom(array: [String]) -> NSSet {
+        let authors = NSMutableSet()
+        
+        for author in authors {
+            let a = Author(name: author as! String, inContext: model.context)
+            authors.add(a)
+        }
+        
+        return authors
+    }
+    
+    private func createBookTags(book: Book, tags: [String]) {
+        for tag in tags {
+            let t = Tag(name: tag, inContext: model.context)
+            let _ = BookTag(book: book, tag: t, inContext: model.context)
+        }
+    }
 }
 
+/**
+   Downloads the JSON file with all books.
+ 
+   - Parameter string: URL's string where is the JSON file with the books.
+ 
+   - Parameter lName: File local name where the JSON file will be saved.
+ */
+func downloadJSONFrom(string str: String, asLocalName lName: String, completion: @escaping () -> ()) throws {
+    var urlDst = Bundle.main.resourceURL!
+    
+    guard let urlSrc = URL(string: str) else {
+        throw HackerBooksError.resourcePointedByURLNotReachable
+    }
+    
+    let task = URLSession.shared.dataTask(with: urlSrc, completionHandler: { (data, response, error) -> Void in
+        if let urlContent = data {
+            urlDst.appendPathComponent(lName)
+            // TODO: don't let me to throw an exception from here
+            try? urlContent.write(to: urlDst)
+            completion()
+        }
+    })
+    
+    task.resume()
+}
