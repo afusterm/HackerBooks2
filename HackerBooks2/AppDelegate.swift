@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 let urlHackerBooks = "https://t.co/K9ziV0z3SJ"
 let localBooksFilename = "books.json"
@@ -20,26 +21,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         if isFirstTime() {
-            
             do {
-                //try downloadJSONFrom(string: urlHackerBooks, asLocalName: localBooksFilename,
-                try downloadJSONFrom(string: urlHackerBooks, asLocalName: localBooksFilename,
-                                     completion: { 
-                                        guard let jsonURL = Bundle.main.url(forResource: "books_readable", withExtension: "json") else {
-                                            fatalError("Unable to read JSON file")
-                                        }
-                                        
-                                        let dict = try? read(fromJSON: jsonURL)
-                                        if let booksArray = dict {
-                                            self.importBooks(fromJSONArray: booksArray)
-                                        }
+                try downloadJSONFrom(string: urlHackerBooks, asLocalName: localBooksFilename, completion: { (jsonURL) in
+                    let dict = try? read(fromJSON: jsonURL)
+                    if let booksArray = dict {
+                        self.importBooks(fromJSONArray: booksArray)
+                    }
+                    
+                    let fc = self.createResultsController()
+                    
+                    DispatchQueue.main.async {
+                        let libraryTV = LibraryTableViewController(fetchedResultsController: fc, style: .plain)
+                        let nav = UINavigationController(rootViewController: libraryTV)
+                        
+                        self.window = UIWindow(frame: UIScreen.main.bounds)
+                        self.window?.rootViewController = nav
+                        self.window?.makeKeyAndVisible()
+                    }
                 })
             } catch let err as HackerBooksError {
                 fatalError("Error on downloadJSON: " + err.description)
             } catch {
                 fatalError("Error on downloadJSON")
             }
-            
+        
             setAppLaunched()
         }
         
@@ -114,8 +119,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func createAuthorsObjectsFrom(array: [String]) -> NSSet {
         let authors = NSMutableSet()
         
-        for author in authors {
-            let a = Author(name: author as! String, inContext: model.context)
+        for author in array {
+            let a = Author(name: author, inContext: model.context)
             authors.add(a)
         }
         
@@ -128,6 +133,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let _ = BookTag(book: book, tag: t, inContext: model.context)
         }
     }
+    
+    private func createResultsController() -> NSFetchedResultsController<NSFetchRequestResult> {
+        let fr = NSFetchRequest<BookTag>(entityName: BookTag.entityName)
+        fr.fetchBatchSize = 50
+        fr.sortDescriptors = [NSSortDescriptor(key: "tag.name", ascending: true),
+                              NSSortDescriptor(key: "book.title", ascending: true)]
+        
+        let fc = NSFetchedResultsController(fetchRequest: fr, managedObjectContext: self.model.context,
+                                            sectionNameKeyPath: "tag.name", cacheName: nil)
+        
+        return fc as! NSFetchedResultsController<NSFetchRequestResult>
+    }
 }
 
 /**
@@ -137,7 +154,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  
    - Parameter lName: File local name where the JSON file will be saved.
  */
-func downloadJSONFrom(string str: String, asLocalName lName: String, completion: @escaping () -> ()) throws {
+func downloadJSONFrom(string str: String, asLocalName lName: String,
+                      completion: @escaping (_ json: URL) -> ()) throws {
     var urlDst = Bundle.main.resourceURL!
     
     guard let urlSrc = URL(string: str) else {
@@ -149,7 +167,7 @@ func downloadJSONFrom(string str: String, asLocalName lName: String, completion:
             urlDst.appendPathComponent(lName)
             // TODO: don't let me to throw an exception from here
             try? urlContent.write(to: urlDst)
-            completion()
+            completion(urlDst)
         }
     })
     
